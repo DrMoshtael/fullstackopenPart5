@@ -4,6 +4,7 @@ import blogService from './services/blogs'
 import Login from './components/Login'
 import loginService from './services/login'
 import BlogForm from './components/BlogForm'
+import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -13,6 +14,8 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [notificationMessage, setNotificationMessage] = useState('testing')
+  const [success, setSuccess] = useState(true)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -30,18 +33,31 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    const theUser = await loginService.login({ username, password })
-    blogService.setToken(theUser.token)
-    window.localStorage.setItem('loggedBlogappUser', JSON.stringify(theUser))
-    setUser(theUser)
-    setUsername('')
-    setPassword('')
+    try {
+      const theUser = await loginService.login({ username, password })
+      blogService.setToken(theUser.token)
+      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(theUser))
+      setUser(theUser)
+      setUsername('')
+      setPassword('')
+      setSuccess(true)
+      setNotificationMessage('Successful login')
+      setTimeout(() => setNotificationMessage(null), 2000)
+    } catch (exception) {
+      setSuccess(false)
+      setNotificationMessage('Wrong username or password')
+      setTimeout(() => setNotificationMessage(null), 2000)
+    }
+
   }
 
   const handleLogout = (event) => {
     event.preventDefault()
     setUser(null)
     window.localStorage.removeItem('loggedBlogappUser')
+    setSuccess(true)
+    setNotificationMessage('Logged out')
+    setTimeout(() => setNotificationMessage(null), 2000)
   }
 
   const handleBlogForm = async (event) => {
@@ -51,16 +67,25 @@ const App = () => {
       author: author,
       url: url
     }
-    const blog = await blogService.addBlog(newBlog)
-    setBlogs(blogs.concat(blog))
-    setTitle('')
-    setAuthor('')
-    setUrl('')
+    try {
+      const blog = await blogService.addBlog(newBlog)
+      setBlogs(blogs.concat(blog))
+      setTitle('')
+      setAuthor('')
+      setUrl('')
+      setSuccess(true)
+      setNotificationMessage(`A new blog, '${blog.title}' by ${blog.author} added`)
+      setTimeout(() => setNotificationMessage(null), 3000)
+    } catch {
+      setSuccess(false)
+      setNotificationMessage('Blog failed to add')
+      setTimeout(() => setNotificationMessage(null), 3000)
+    }
   }
 
   const blogSection = (user) => (
     <div>
-      < h2 > blogs</h2>
+      <h2> blogs</h2>
       <p>
         {user.name} logged in
         <button onClick={handleLogout}>logout</button>
@@ -83,6 +108,7 @@ const App = () => {
 
   return (
     <div>
+      <Notification message = {notificationMessage} successful={success}/>
       {!user && loginSection()}
       {user && blogSection(user)}
     </div>

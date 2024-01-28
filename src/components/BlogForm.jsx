@@ -9,6 +9,7 @@ const BlogForm = ({ title, author, url, setTitle, setAuthor, setUrl, handleBlogF
                     value={title}
                     id="title"
                     onChange={({ target }) => setTitle(target.value)}
+                    required
                 />
             </div>
             <div>
@@ -27,6 +28,7 @@ const BlogForm = ({ title, author, url, setTitle, setAuthor, setUrl, handleBlogF
                     value={url}
                     id="url"
                     onChange={({ target }) => setUrl(target.value)}
+                    required
                 />
             </div>
             <button type="submit">add</button>
