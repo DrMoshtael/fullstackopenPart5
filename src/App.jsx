@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import Login from './components/Login'
 import loginService from './services/login'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
+import Toggleable from './components/Toggleable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -14,7 +15,7 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
-  const [notificationMessage, setNotificationMessage] = useState('testing')
+  const [notificationMessage, setNotificationMessage] = useState(null)
   const [success, setSuccess] = useState(true)
 
   useEffect(() => {
@@ -60,6 +61,8 @@ const App = () => {
     setTimeout(() => setNotificationMessage(null), 2000)
   }
 
+  const blogFormRef = useRef()
+
   const handleBlogForm = async (event) => {
     event.preventDefault()
     const newBlog = {
@@ -76,12 +79,15 @@ const App = () => {
       setSuccess(true)
       setNotificationMessage(`A new blog, '${blog.title}' by ${blog.author} added`)
       setTimeout(() => setNotificationMessage(null), 3000)
+      blogFormRef.current.toggleVisibilty()
     } catch {
       setSuccess(false)
       setNotificationMessage('Blog failed to add')
       setTimeout(() => setNotificationMessage(null), 3000)
     }
   }
+
+
 
   const blogSection = (user) => (
     <div>
@@ -90,7 +96,9 @@ const App = () => {
         {user.name} logged in
         <button onClick={handleLogout}>logout</button>
       </p>
-      <BlogForm title={title} author={author} url={url} setTitle={setTitle} setAuthor={setAuthor} setUrl={setUrl} handleBlogForm={handleBlogForm} />
+      <Toggleable buttonLabel="new note" ref={blogFormRef}>
+        <BlogForm title={title} author={author} url={url} setTitle={setTitle} setAuthor={setAuthor} setUrl={setUrl} handleBlogForm={handleBlogForm} />
+      </Toggleable>
       {
         blogs.map(blog =>
           <Blog key={blog.id} blog={blog} />
