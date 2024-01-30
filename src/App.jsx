@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
-import Login from './components/Login'
+import LoginForm from './components/LoginForm'
 import loginService from './services/login'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
@@ -9,12 +9,7 @@ import Toggleable from './components/Toggleable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [notificationMessage, setNotificationMessage] = useState(null)
   const [success, setSuccess] = useState(true)
 
@@ -32,15 +27,12 @@ const App = () => {
     }
   }, [])
 
-  const handleLogin = async (event) => {
-    event.preventDefault()
+  const logIn = async (credentials) => {
     try {
-      const theUser = await loginService.login({ username, password })
+      const theUser = await loginService.login(credentials)
       blogService.setToken(theUser.token)
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(theUser))
       setUser(theUser)
-      setUsername('')
-      setPassword('')
       setSuccess(true)
       setNotificationMessage('Successful login')
       setTimeout(() => setNotificationMessage(null), 2000)
@@ -63,19 +55,10 @@ const App = () => {
 
   const blogFormRef = useRef()
 
-  const handleBlogForm = async (event) => {
-    event.preventDefault()
-    const newBlog = {
-      title: title,
-      author: author,
-      url: url
-    }
+  const addBlog = async (blogObject) => {
     try {
-      const blog = await blogService.addBlog(newBlog)
+      const blog = await blogService.postBlog(blogObject)
       setBlogs(blogs.concat(blog))
-      setTitle('')
-      setAuthor('')
-      setUrl('')
       setSuccess(true)
       setNotificationMessage(`A new blog, '${blog.title}' by ${blog.author} added`)
       setTimeout(() => setNotificationMessage(null), 3000)
@@ -87,8 +70,6 @@ const App = () => {
     }
   }
 
-
-
   const blogSection = (user) => (
     <div>
       <h2> blogs</h2>
@@ -97,7 +78,7 @@ const App = () => {
         <button onClick={handleLogout}>logout</button>
       </p>
       <Toggleable buttonLabel="new note" ref={blogFormRef}>
-        <BlogForm title={title} author={author} url={url} setTitle={setTitle} setAuthor={setAuthor} setUrl={setUrl} handleBlogForm={handleBlogForm} />
+        <BlogForm createBlog={addBlog} />
       </Toggleable>
       {
         blogs.map(blog =>
@@ -110,7 +91,7 @@ const App = () => {
   const loginSection = () => (
     <div>
       <h2>log in to application</h2>
-      <Login username={username} password={password} setUsername={setUsername} setPassword={setPassword} handleLogin={handleLogin} />
+      <LoginForm logIn={logIn} />
     </div>
   )
 

@@ -11,7 +11,7 @@ const getAll = () => {
   return request.then(response => response.data)
 }
 
-const addBlog = async newBlog => {
+const postBlog = async newBlog => {
   const config = {
     headers: {
       Authorization: token
@@ -21,4 +21,4 @@ const addBlog = async newBlog => {
   return response.data
 }
 
-export default { getAll, addBlog, setToken }
+export default { getAll, postBlog, setToken }
