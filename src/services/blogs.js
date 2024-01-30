@@ -11,6 +11,11 @@ const getAll = () => {
   return request.then(response => response.data)
 }
 
+const getOne = (id) => {
+  const request = axios.get(`${baseUrl}/${id}`)
+  return request.then(response => response.data)
+}
+
 const postBlog = async newBlog => {
   const config = {
     headers: {
@@ -21,4 +26,4 @@ const postBlog = async newBlog => {
   return response.data
 }
 
-export default { getAll, postBlog, setToken }
+export default { getAll, postBlog, setToken, getOne }
