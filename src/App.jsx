@@ -24,6 +24,7 @@ const App = () => {
     if (userJSON) {
       const theUser = JSON.parse(userJSON)
       setUser(theUser)
+      blogService.setToken(theUser.token)
     }
   }, [])
 
@@ -88,7 +89,7 @@ const App = () => {
         blogs
         .sort((a,b) => b.likes - a.likes)
         .map(blog =>
-          <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs}/>
+          <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} user={user}/>
         )
       }
     </div>

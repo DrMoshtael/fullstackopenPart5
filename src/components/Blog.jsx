@@ -1,7 +1,7 @@
 import { useState } from "react"
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, blogs, setBlogs }) => {
+const Blog = ({ blog, blogs, setBlogs, user }) => {
   const [collapsed, setCollapsed] = useState(true)
 
   const toggleCollapse = () => {
@@ -17,22 +17,35 @@ const Blog = ({ blog, blogs, setBlogs }) => {
   }
 
   const handleLike = async () => {
-    setBlogs(blogs.map(blg => blg.id !== blog.id ? blg : {...blog, likes: ++blog.likes})) //Update immediately for a more responsive feel
-    const likedBlog = {...blog, likes: ++blog.likes, user: blog.user.id}
+    setBlogs(blogs.map(blg => blg.id !== blog.id ? blg : { ...blog, likes: ++blog.likes })) //Update immediately for a more responsive feel
+    const likedBlog = { ...blog, likes: ++blog.likes, user: blog.user.id }
     await blogService.postLike(blog.id, likedBlog)
   }
 
-  const fullView = () => (
-    <div>
-      <div>{blog.url}</div>
-      <div>likes {blog.likes}<button onClick={handleLike}>like</button></div>
-      <div>{blog.user.name}</div>
-    </div>
-  )
+  const handleDelete = async () => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+      setBlogs(blogs.filter(blg => blg.id !== blog.id))
+      await blogService.deleteBlog(blog.id)
+    }
+  }
+
+  const fullView = () => {
+    let usersBlog = false
+    if (blog.user.username === user.username) usersBlog = true //To avoid doing an additional GET request for the user ID, just use the username which is also unique
+
+    return (
+      <div>
+        <div>{blog.url}</div>
+        <div>likes {blog.likes}<button onClick={handleLike}>like</button></div>
+        <div>{blog.user.name}</div>
+        <div><button onClick={handleDelete} style={{display: usersBlog ? '' : 'none'}}>remove</button></div>
+      </div>
+    )
+  }
 
   return (
     <div style={blogStyle}>
-      {blog.title} {blog.author}
+      {blog.title} by {blog.author}
       <button onClick={toggleCollapse}> {collapsed ? "view" : "hide"}</button>
       {!collapsed && fullView()}
     </div>
