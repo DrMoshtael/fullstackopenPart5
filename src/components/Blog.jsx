@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState } from 'react'
 import blogService from '../services/blogs'
 
 const Blog = ({ blog, blogs, setBlogs, user }) => {
@@ -38,7 +38,7 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
         <div>{blog.url}</div>
         <div>likes {blog.likes}<button onClick={handleLike}>like</button></div>
         <div>{blog.user.name}</div>
-        <div><button onClick={handleDelete} style={{display: usersBlog ? '' : 'none'}}>remove</button></div>
+        <div><button onClick={handleDelete} style={{ display: usersBlog ? '' : 'none' }}>remove</button></div>
       </div>
     )
   }
@@ -46,7 +46,7 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
   return (
     <div style={blogStyle}>
       {blog.title} by {blog.author}
-      <button onClick={toggleCollapse}> {collapsed ? "view" : "hide"}</button>
+      <button onClick={toggleCollapse}> {collapsed ? 'view' : 'hide'}</button>
       {!collapsed && fullView()}
     </div>
   )
