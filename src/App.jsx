@@ -75,6 +75,14 @@ const App = () => {
     }
   }
 
+  const handleLikeFor = async (blog) => {
+    setBlogs(blogs.map(blg => blg.id !== blog.id ? blg : { ...blog, likes: blog.likes+1 })) //Update immediately for a more responsive feel
+    const likedBlog = { ...blog, likes: ++blog.likes, user: blog.user.id }
+    await blogService.postLike(blog.id, likedBlog)
+  }
+
+
+
   const blogSection = (user) => (
     <div>
       <h2> blogs</h2>
@@ -89,7 +97,7 @@ const App = () => {
         blogs
           .sort((a,b) => b.likes - a.likes)
           .map(blog =>
-            <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} user={user}/>
+            <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} user={user} likeHandler={() => handleLikeFor(blog)}/>
           )
       }
     </div>

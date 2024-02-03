@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, blogs, setBlogs, user }) => {
+const Blog = ({ blog, blogs, setBlogs, user, likeHandler }) => {
   const [collapsed, setCollapsed] = useState(true)
 
   const toggleCollapse = () => {
@@ -16,11 +16,11 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
     marginBottom: 5
   }
 
-  const handleLike = async () => {
-    setBlogs(blogs.map(blg => blg.id !== blog.id ? blg : { ...blog, likes: ++blog.likes })) //Update immediately for a more responsive feel
-    const likedBlog = { ...blog, likes: ++blog.likes, user: blog.user.id }
-    await blogService.postLike(blog.id, likedBlog)
-  }
+  // const handleLike = async () => {
+  //   setBlogs(blogs.map(blg => blg.id !== blog.id ? blg : { ...blog, likes: ++blog.likes })) //Update immediately for a more responsive feel
+  //   const likedBlog = { ...blog, likes: ++blog.likes, user: blog.user.id }
+  //   await blogService.postLike(blog.id, likedBlog)
+  // }
 
   const handleDelete = async () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
@@ -36,7 +36,7 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
     return (
       <div>
         <div>{blog.url}</div>
-        <div>likes {blog.likes}<button onClick={handleLike}>like</button></div>
+        <div>likes {blog.likes}<button onClick={likeHandler} id='like-button'>like</button></div>
         <div>{blog.user.name}</div>
         <div><button onClick={handleDelete} style={{ display: usersBlog ? '' : 'none' }}>remove</button></div>
       </div>
