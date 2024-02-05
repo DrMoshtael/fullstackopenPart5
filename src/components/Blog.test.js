@@ -6,74 +6,74 @@ import userEvent from '@testing-library/user-event'
 import BlogService from '../services/blogs'
 
 describe('blog', () => {
-    let container
+  let container
 
-    beforeEach(() => {
-        const user = { username: 'testerA', name: "tester" }
-        const blog = {
-            title: 'Test title',
-            author: 'Test author',
-            url: 'http://www.testA.org',
-            likes: 23,
-            user: user
-        }
+  beforeEach(() => {
+    const user = { username: 'testerA', name: 'tester' }
+    const blog = {
+      title: 'Test title',
+      author: 'Test author',
+      url: 'http://www.testA.org',
+      likes: 23,
+      user: user
+    }
 
-        container = render(<Blog blog={blog} user={user} />).container
-    })
+    container = render(<Blog blog={blog} user={user} />).container
+  })
 
-    test('by default renders title & author only', () => {
+  test('by default renders title & author only', () => {
 
-        const title = screen.getByText('Test title', { exact: false })
-        const author = screen.getByText('Test author', { exact: false })
-        const url = screen.queryByText('http://www.testA.org')
-        const likes = screen.queryByText('23', { exact: false })
+    const title = screen.getByText('Test title', { exact: false })
+    const author = screen.getByText('Test author', { exact: false })
+    const url = screen.queryByText('http://www.testA.org')
+    const likes = screen.queryByText('23', { exact: false })
 
-        expect(title).toBeDefined()
-        expect(author).toBeDefined()
-        expect(url).toBeNull()
-        expect(likes).toBeNull()
-    })
+    expect(title).toBeDefined()
+    expect(author).toBeDefined()
+    expect(url).toBeNull()
+    expect(likes).toBeNull()
+  })
 
-    test('renders URL and likes when expanded', async () => {
-        const user = userEvent.setup()
-        const viewButton = screen.getByText('view')
-        await user.click(viewButton)
-        const url = screen.queryByText('http://www.testA.org')
-        const likes = screen.queryByText('23', { exact: false })
-        expect(url).toBeDefined()
-        expect(likes).toBeDefined()
-    })
+  test('renders URL and likes when expanded', async () => {
+    const user = userEvent.setup()
+    const viewButton = screen.getByText('view')
+    await user.click(viewButton)
+    const url = screen.queryByText('http://www.testA.org')
+    const likes = screen.queryByText('23', { exact: false })
+    expect(url).toBeDefined()
+    expect(likes).toBeDefined()
+  })
 })
 
 test('like button works', async () => {
-    const mockLikeHandler = jest.fn()
+  const mockLikeHandler = jest.fn()
 
-    const user = { username: 'testerA', name: "tester" }
-    const blog = {
-        title: 'Test title',
-        author: 'Test author',
-        url: 'http://www.testA.org',
-        likes: 23,
-        user: user
-    }
+  const user = { username: 'testerA', name: 'tester' }
+  const blog = {
+    title: 'Test title',
+    author: 'Test author',
+    url: 'http://www.testA.org',
+    likes: 23,
+    user: user
+  }
 
-    const container = render(<Blog blog={blog} user={user} likeHandler={mockLikeHandler} />).container
+  const container = render(<Blog blog={blog} user={user} likeHandler={mockLikeHandler} />).container
 
-    const usr = userEvent.setup()
-    const viewButton = screen.getByText('view')
-    await usr.click(viewButton)
-    const likeButton = container.querySelector('#like-button')
-    await usr.click(likeButton)
-    await usr.click(likeButton)
+  const usr = userEvent.setup()
+  const viewButton = screen.getByText('view')
+  await usr.click(viewButton)
+  const likeButton = container.querySelector('#like-button')
+  await usr.click(likeButton)
+  await usr.click(likeButton)
 
-    expect(mockLikeHandler.mock.calls).toHaveLength(2)
-    expect(mockLikeHandler).toHaveBeenCalled()
+  expect(mockLikeHandler.mock.calls).toHaveLength(2)
+  expect(mockLikeHandler).toHaveBeenCalled()
 })
 
 //I don't pass handleLike as props to Blog and didn't want to change it just for the test.
 //So I learnt about mocking the whole Component
 //And how to selectively mock certain event handlers while maintaining the others
-// test('like button works', async () => {  
+// test('like button works', async () => {
 //     const usr = { username: 'testerA', name: "tester" }
 //     const blog = {
 //         title: 'Test title',
