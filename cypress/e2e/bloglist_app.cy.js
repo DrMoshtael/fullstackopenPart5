@@ -41,7 +41,7 @@ describe('Blog app', function () {
       cy.login('testerX','pass')
     })
 
-    it('A blog can be created', function() {
+    it('a blog can be created', function() {
       cy.contains('add new blog').click()
       cy.get('#title').type('Test title')
       cy.get('#author').type('Test Author')
@@ -50,5 +50,18 @@ describe('Blog app', function () {
 
       cy.contains('Test title')
     })
+
+    describe('and a blog exists', function() {
+      beforeEach(function() {
+        cy.addBlog('Test title', 'Test Author', 'http://www.testX.com')
+      })
+
+      it('the blog can be liked', function() {
+        cy.contains('Test title').contains('view').click()
+        cy.contains('like').click()
+        cy.contains('1')
+      })
+    })
+
   })
 })
