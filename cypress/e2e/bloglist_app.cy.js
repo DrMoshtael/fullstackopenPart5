@@ -56,10 +56,17 @@ describe('Blog app', function () {
         cy.addBlog('Test title', 'Test Author', 'http://www.testX.com')
       })
 
-      it('the blog can be liked', function() {
+      it('it can be liked', function() {
         cy.contains('Test title').contains('view').click()
         cy.contains('like').click()
         cy.contains('1')
+      })
+
+      it('it can be deleted by the creator', function() {
+        cy.contains('Test title').contains('view').click()
+        cy.contains('remove').click()
+        // cy.contains('OK').click()
+        cy.contains('Test title').should('not.exist')
       })
     })
 
