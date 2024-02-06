@@ -38,10 +38,10 @@ describe('Blog app', function () {
 
   describe('When logged in', function () {
     beforeEach(function () {
-      cy.login('testerX','pass')
+      cy.login('testerX', 'pass')
     })
 
-    it('a blog can be created', function() {
+    it('a blog can be created', function () {
       cy.contains('add new blog').click()
       cy.get('#title').type('Test title')
       cy.get('#author').type('Test Author')
@@ -51,25 +51,25 @@ describe('Blog app', function () {
       cy.contains('Test title')
     })
 
-    describe('and a blog exists', function() {
-      beforeEach(function() {
+    describe('and a blog exists', function () {
+      beforeEach(function () {
         cy.addBlog('Test title', 'Test Author', 'http://www.testX.com')
       })
 
-      it('it can be liked', function() {
+      it('it can be liked', function () {
         cy.contains('Test title').contains('view').click()
         cy.contains('like').click()
         cy.contains('1')
       })
 
-      it('it can be deleted by the creator', function() {
+      it('it can be deleted by the creator', function () {
         cy.contains('Test title').contains('view').click()
         cy.contains('remove').click()
         // cy.contains('OK').click()
         cy.contains('Test title').should('not.exist')
       })
 
-      it('only its creator can see its delete button', function() {
+      it('only its creator can see its delete button', function () {
         cy.contains('Test title').contains('view').click()
         cy.contains('remove') //Creator can see it
         cy.contains('logout').click()
@@ -82,6 +82,26 @@ describe('Blog app', function () {
         cy.login('testerY', 'pass')
         cy.contains('Test title').contains('view').click()
         cy.contains('remove').should('have.css', 'display', 'none') //Non-creator can't see it
+      })
+    })
+
+    describe('and multiple blogs exist', function () {
+      beforeEach(function () {
+        cy.addBlog('Title1', 'Author', 'http://www.test1.com')
+        cy.addBlog('Title2', 'Author', 'http://www.test2.com') //Use the same author in both
+      })
+
+      it('the blogs are ordered by likes, highest to lowest', function () {
+        cy.contains('Author') //Finds blog at the top
+          .should('not.contain', 'Title2') //It isn't Title2
+        cy.contains('Author')
+          .contains('Title1') //It is currently Title1
+        cy.contains('Title2').contains('view').click()
+        cy.contains('Title2').contains('like').click() //Now Title2 should have moved to the top
+        cy.contains('Author') //Finds blog at the top
+          .should('not.contain', 'Title1') //It is no longer Title1
+        cy.contains('Author')
+          .contains('Title2') //It is now Title2
       })
     })
   })

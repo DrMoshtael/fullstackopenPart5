@@ -44,7 +44,7 @@ const Blog = ({ blog, blogs, setBlogs, user, likeHandler }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div className='Blog' style={blogStyle}>
       {blog.title} by {blog.author}
       <button onClick={toggleCollapse}>{collapsed ? 'view' : 'hide'}</button>
       {!collapsed && fullView()}
