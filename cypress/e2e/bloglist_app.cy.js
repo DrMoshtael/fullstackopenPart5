@@ -68,7 +68,21 @@ describe('Blog app', function () {
         // cy.contains('OK').click()
         cy.contains('Test title').should('not.exist')
       })
-    })
 
+      it('only its creator can see its delete button', function() {
+        cy.contains('Test title').contains('view').click()
+        cy.contains('remove') //Creator can see it
+        cy.contains('logout').click()
+        const user2 = {
+          username: 'testerY',
+          password: 'pass',
+          name: 'Testing woman'
+        }
+        cy.request('POST', `${Cypress.env('BACKEND')}/users`, user2)
+        cy.login('testerY', 'pass')
+        cy.contains('Test title').contains('view').click()
+        cy.contains('remove').should('have.css', 'display', 'none') //Non-creator can't see it
+      })
+    })
   })
 })
